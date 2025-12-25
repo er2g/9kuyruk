@@ -63,7 +63,7 @@ Modern, güvenli ve kullanıcı dostu Spotify uzaktan kontrol ve cihaz yönetim 
 1. [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)'a gidin
 2. Yeni bir app oluşturun
 3. Client ID ve Client Secret alın
-4. Redirect URI ekleyin: `https://yourdomain.com/api/spotify/callback`
+4. Redirect URI ekleyin: `https://yourdomain/api/spotify/callback`
 
 ### 2. Backend Kurulumu
 
@@ -149,7 +149,7 @@ npm run build
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name yourdomain.com;
+    server_name yourdomain;
 
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;

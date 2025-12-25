@@ -35,7 +35,7 @@ Edit `.env` and add your Spotify API credentials:
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new app
 3. Copy Client ID and Client Secret
-4. Add redirect URI: `https://yourdomain.com/api/spotify/callback`
+4. Add redirect URI: `https://yourdomain/api/spotify/callback`
 
 ### 3. Database Setup
 ```bash
@@ -220,10 +220,10 @@ For production, use a reverse proxy like Nginx:
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name yourdomain.com;
+    server_name yourdomain;
 
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/yourdomain/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain/privkey.pem;
 
     location /api/ {
         proxy_pass http://localhost:3000/api/;

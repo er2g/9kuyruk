@@ -22,7 +22,7 @@ fn get_client_secret() -> String {
 
 fn get_redirect_uri() -> String {
     std::env::var("SPOTIFY_REDIRECT_URI")
-        .unwrap_or_else(|_| "https://yourdomain.com/api/spotify/callback".to_string())
+        .unwrap_or_else(|_| "https://yourdomain/api/spotify/callback".to_string())
 }
 
 // Request/Response types
