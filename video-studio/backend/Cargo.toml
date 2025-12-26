@@ -1,0 +1,58 @@
+[package]
+name = "video-studio"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["ws", "multipart", "macros"] }
+tokio = { version = "1", features = ["full"] }
+tower = { version = "0.4", features = ["util", "timeout", "load-shed", "limit"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "trace", "compression-full"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "migrate", "chrono", "uuid"] }
+
+# Authentication
+jsonwebtoken = "9"
+argon2 = "0.5"
+rand = "0.8"
+
+# File handling
+tokio-util = { version = "0.7", features = ["io"] }
+async-tempfile = "0.4"
+mime_guess = "2"
+
+# Video processing
+ffmpeg-sidecar = "1"
+
+# Job queue & background tasks
+redis = { version = "0.24", features = ["tokio-comp", "connection-manager"] }
+
+# Storage
+aws-sdk-s3 = "1"
+aws-config = "1"
+
+# Utilities
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1"
+thiserror = "1"
+
+# Environment & Config
+dotenvy = "0.15"
+config = "0.14"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# WebSocket
+futures = "0.3"
+
+# HTTP client
+reqwest = { version = "0.11", features = ["json", "multipart"] }
