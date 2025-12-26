@@ -104,6 +104,61 @@ export const aiTools = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
+
+  // Scene detection
+  detectScenes: (video: File, threshold?: number) => {
+    const formData = new FormData();
+    formData.append('video', video);
+    if (threshold) formData.append('threshold', threshold.toString());
+    return api.post('/ai/scene/detect', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Auto-reframe for social media
+  autoReframe: (video: File, targetAspect: string) => {
+    const formData = new FormData();
+    formData.append('video', video);
+    formData.append('target_aspect', targetAspect); // "9:16", "1:1", "16:9"
+    return api.post('/ai/reframe', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Chroma key (green screen)
+  chromaKey: (video: File, keyColor?: string, similarity?: number, blend?: number) => {
+    const formData = new FormData();
+    formData.append('video', video);
+    if (keyColor) formData.append('key_color', keyColor);
+    if (similarity) formData.append('similarity', similarity.toString());
+    if (blend) formData.append('blend', blend.toString());
+    return api.post('/ai/chroma-key', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Beat detection for music sync
+  detectBeats: (audio: File, sensitivity?: number) => {
+    const formData = new FormData();
+    formData.append('audio', audio);
+    if (sensitivity) formData.append('sensitivity', sensitivity.toString());
+    return api.post('/ai/beat-detection', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // AI Agent chat
+  chatWithAgent: (message: string, projectId?: string) => {
+    return api.post('/ai/agent/chat', {
+      message,
+      project_id: projectId,
+    });
+  },
+
+  // Generate proxy video for editing
+  generateProxy: (assetId: string) => {
+    return api.post(`/ai/proxy/${assetId}`);
+  },
 };
 
 export default api;

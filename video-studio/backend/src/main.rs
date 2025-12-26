@@ -81,6 +81,12 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/ai/overlay/auto-distribute", post(api::ai_tools::auto_distribute))
         .route("/api/ai/subtitle/align", post(api::ai_tools::align_subtitles))
         .route("/api/ai/subtitle/transcribe", post(api::ai_tools::transcribe_audio))
+        .route("/api/ai/scene/detect", post(api::ai_tools::detect_scenes))
+        .route("/api/ai/reframe", post(api::ai_tools::auto_reframe))
+        .route("/api/ai/chroma-key", post(api::ai_tools::chroma_key))
+        .route("/api/ai/beat-detection", post(api::ai_tools::detect_beats))
+        .route("/api/ai/agent/chat", post(api::ai_tools::ai_agent_chat))
+        .route("/api/ai/proxy/:asset_id", post(api::ai_tools::generate_proxy))
 
         // WebSocket for real-time updates
         .route("/ws", get(api::websocket::handler))
