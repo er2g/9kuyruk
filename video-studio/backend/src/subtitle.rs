@@ -3,6 +3,7 @@ use std::path::Path;
 use std::process::Command;
 use tokio::fs;
 use anyhow::Result;
+use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SubtitleEntry {
@@ -23,8 +24,8 @@ pub struct AeneasConfig {
 /// Requires: pip install aeneas
 pub async fn generate_subtitles_aeneas(config: AeneasConfig) -> Result<Vec<SubtitleEntry>> {
     // Create temp files
-    let text_file = format!("/tmp/aeneas_text_{}.txt", uuid::Uuid::new_v4());
-    let output_file = format!("/tmp/aeneas_output_{}.json", uuid::Uuid::new_v4());
+    let text_file = format!("/tmp/aeneas_text_{}.txt", Uuid::new_v4());
+    let output_file = format!("/tmp/aeneas_output_{}.json", Uuid::new_v4());
 
     // Write text to temp file
     fs::write(&text_file, &config.text).await?;

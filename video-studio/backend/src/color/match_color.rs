@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use anyhow::Result;
 use std::process::Command;
+use uuid::Uuid;
 
 /// AI-powered color matching between clips
 /// Similar to DaVinci Resolve's "Shot Match" feature
@@ -48,7 +49,7 @@ pub async fn match_color(config: ColorMatchConfig) -> Result<ColorMatchResult> {
         let target_stats = analyze_clip_colors(target_clip).await?;
 
         // Generate matching LUT
-        let lut_path = format!("/tmp/match_lut_{}.cube", uuid::Uuid::new_v4());
+        let lut_path = format!("/tmp/match_lut_{}.cube", Uuid::new_v4());
 
         // In production, use actual color science to generate LUT
         // For now, use FFmpeg's curves/colorlevels
@@ -78,7 +79,7 @@ struct ClipColorStats {
 
 async fn analyze_clip_colors(clip_path: &str) -> Result<ClipColorStats> {
     // Use FFmpeg signalstats to analyze
-    let output = Command::new("ffmpeg")
+    let _output = Command::new("ffmpeg")
         .args(&[
             "-i", clip_path,
             "-vf", "signalstats",

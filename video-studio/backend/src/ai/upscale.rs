@@ -22,7 +22,7 @@ pub enum UpscaleModel {
     Quality,
 }
 
-pub async fn upscale_video(config: UpscaleConfig) -> Result<String> {
+pub async fn upscale_video(_config: UpscaleConfig) -> Result<String> {
     // Would use AI upscaling (Real-ESRGAN, Topaz, etc.)
     Ok("/tmp/upscaled_video.mp4".to_string())
 }

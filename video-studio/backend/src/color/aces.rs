@@ -22,13 +22,13 @@ pub enum ACESColorSpace {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ACESODT {
     /// Rec.709 / sRGB display
-    Rec709_100nits,
+    Rec709_100Nits,
     /// DCI-P3 D65 display
-    DCIP3_D65,
+    DciP3D65,
     /// Rec.2020 / UHD display
-    Rec2020_100nits,
+    Rec2020_100Nits,
     /// Rec.2020 ST2084 (PQ) 1000 nits
-    Rec2020_ST2084_1000nits,
+    Rec2020ST2084_1000Nits,
 }
 
 impl ACESColorSpace {
@@ -55,7 +55,7 @@ impl ACESPipeline {
         Self {
             input_color_space: "Rec.709".to_string(),
             working_space: ACESColorSpace::ACEScg,
-            odt: ACESODT::Rec709_100nits,
+            odt: ACESODT::Rec709_100Nits,
         }
     }
 

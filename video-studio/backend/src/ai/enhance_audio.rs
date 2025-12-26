@@ -17,7 +17,7 @@ pub enum AudioProfile {
     Auto,
 }
 
-pub async fn enhance_audio(config: AudioEnhancementConfig) -> Result<String> {
+pub async fn enhance_audio(_config: AudioEnhancementConfig) -> Result<String> {
     // Would use AI noise reduction (RNNoise, etc.)
     Ok("/tmp/enhanced_audio.wav".to_string())
 }

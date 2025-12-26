@@ -15,7 +15,7 @@ pub enum Quality {
     Final,
 }
 
-pub async fn remove_background(config: BackgroundRemovalConfig) -> Result<String> {
+pub async fn remove_background(_config: BackgroundRemovalConfig) -> Result<String> {
     // Would use ML model like U2-Net or MODNet
     Ok("/tmp/output_no_bg.mp4".to_string())
 }

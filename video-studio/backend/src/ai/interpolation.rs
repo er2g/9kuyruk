@@ -15,7 +15,7 @@ pub enum InterpolationQuality {
     Final,
 }
 
-pub async fn interpolate_frames(config: InterpolationConfig) -> Result<String> {
+pub async fn interpolate_frames(_config: InterpolationConfig) -> Result<String> {
     // Would use optical flow (RIFE, DAIN, etc.)
     Ok("/tmp/interpolated_video.mp4".to_string())
 }

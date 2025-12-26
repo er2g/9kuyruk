@@ -22,7 +22,7 @@ pub struct Beat {
     pub is_downbeat: bool,
 }
 
-pub async fn detect_beats(config: BeatDetectionConfig) -> Result<BeatDetectionResult> {
+pub async fn detect_beats(_config: BeatDetectionConfig) -> Result<BeatDetectionResult> {
     // Would use librosa, essentia, or ML-based beat detection
     // For now, use FFmpeg's silencedetect as placeholder
 

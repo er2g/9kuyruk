@@ -30,7 +30,7 @@ pub struct TimelineClip {
     pub script_reference: String,
 }
 
-pub async fn create_rough_cut(config: RoughCutConfig) -> Result<RoughCutResult> {
+pub async fn create_rough_cut(_config: RoughCutConfig) -> Result<RoughCutResult> {
     // Would use NLP + video analysis AI
     Ok(RoughCutResult {
         timeline: vec![],

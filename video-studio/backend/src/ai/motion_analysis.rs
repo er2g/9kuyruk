@@ -37,7 +37,7 @@ pub struct SubjectMotion {
     pub direction: f64,
 }
 
-pub async fn analyze_motion(config: MotionAnalysisConfig) -> Result<MotionAnalysisResult> {
+pub async fn analyze_motion(_config: MotionAnalysisConfig) -> Result<MotionAnalysisResult> {
     Ok(MotionAnalysisResult {
         camera_motion: CameraMotion {
             motion_type: CameraMotionType::Static,

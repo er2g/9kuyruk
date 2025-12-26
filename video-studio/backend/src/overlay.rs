@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::path::Path;
 use anyhow::Result;
 
 const TARGET_W: u32 = 1080;

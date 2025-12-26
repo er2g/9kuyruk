@@ -37,7 +37,7 @@ pub struct TrackedFrame {
     pub confidence: f64,
 }
 
-pub async fn track_object(config: TrackingConfig) -> Result<TrackingResult> {
+pub async fn track_object(_config: TrackingConfig) -> Result<TrackingResult> {
     // Would use OpenCV's object tracking or ML model
     Ok(TrackingResult {
         frames: vec![],

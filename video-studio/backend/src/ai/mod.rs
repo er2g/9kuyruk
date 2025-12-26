@@ -5,7 +5,6 @@
 /// and DaVinci Resolve capabilities.
 
 pub mod auto_reframe;
-pub mod match_color;
 pub mod track_object;
 pub mod remove_background;
 pub mod enhance_audio;
@@ -17,7 +16,6 @@ pub mod interpolation;
 pub mod beat_detection;
 
 pub use auto_reframe::*;
-pub use match_color::*;
 pub use track_object::*;
 pub use remove_background::*;
 pub use enhance_audio::*;

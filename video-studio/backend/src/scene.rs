@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use anyhow::{Result, anyhow};
 use std::process::Command;
+use uuid::Uuid;
 
 /// Scene detection using FFmpeg's scene detection filter
 /// Professional-grade shot change detection
@@ -113,7 +114,7 @@ pub async fn detect_scenes(config: SceneDetectionConfig) -> Result<SceneAnalysis
 /// Uses histogram comparison for more accurate detection
 pub async fn detect_scenes_advanced(config: SceneDetectionConfig) -> Result<SceneAnalysis> {
     // This uses FFmpeg's scdet filter with histogram analysis
-    let temp_log = format!("/tmp/scene_detect_{}.log", uuid::Uuid::new_v4());
+    let temp_log = format!("/tmp/scene_detect_{}.log", Uuid::new_v4());
 
     let output = Command::new("ffmpeg")
         .args(&[
@@ -127,7 +128,7 @@ pub async fn detect_scenes_advanced(config: SceneDetectionConfig) -> Result<Scen
 
     let stderr = String::from_utf8_lossy(&output.stderr);
 
-    let mut scenes = Vec::new();
+    let mut scenes: Vec<Scene> = Vec::new();
     let mut last_time = 0.0;
     let mut scene_index = 0;
 

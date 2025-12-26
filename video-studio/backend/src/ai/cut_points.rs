@@ -20,7 +20,7 @@ pub struct CutPoint {
     pub confidence: f64,
 }
 
-pub async fn suggest_cut_points(config: CutPointConfig) -> Result<CutPointResult> {
+pub async fn suggest_cut_points(_config: CutPointConfig) -> Result<CutPointResult> {
     Ok(CutPointResult {
         suggested_cuts: vec![],
     })
