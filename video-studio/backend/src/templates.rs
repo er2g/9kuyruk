@@ -1,2 +1,1 @@
-// Video templates and presets
-// TODO: Implement template system
+// Video templates and presets (placeholder for future expansion)

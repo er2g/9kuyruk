@@ -41,12 +41,13 @@ async fn main() -> anyhow::Result<()> {
     let redis = redis::Client::open(redis_url)?;
 
     let storage = Arc::new(storage::StorageBackend::new().await?);
-    let job_queue = Arc::new(RwLock::new(jobs::JobQueue::new()));
+    let (job_queue, job_receiver) = jobs::JobQueue::new();
+    let job_queue = Arc::new(RwLock::new(job_queue));
 
-    let state = AppState { db, redis, storage, job_queue: job_queue.clone() };
+    let state = AppState { db: db.clone(), redis, storage, job_queue: job_queue.clone() };
 
     // Start background job processor
-    tokio::spawn(jobs::process_jobs(job_queue));
+    tokio::spawn(jobs::process_jobs(job_receiver, db.clone()));
 
     let app = Router::new()
         .route("/health", get(|| async { "OK" }))
@@ -57,11 +58,12 @@ async fn main() -> anyhow::Result<()> {
 
         // Projects
         .route("/api/projects", get(api::projects::list).post(api::projects::create))
-        .route("/api/projects/:id", get(api::projects::get).delete(api::projects::delete))
+        .route("/api/projects/:id", get(api::projects::get).put(api::projects::update).delete(api::projects::delete))
 
         // Assets (video/image upload)
         .route("/api/assets/upload", post(api::assets::upload))
         .route("/api/assets", get(api::assets::list))
+        .route("/api/assets/:id", axum::routing::delete(api::assets::delete))
 
         // Timeline/Composition
         .route("/api/compositions", post(api::compositions::create))

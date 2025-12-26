@@ -1,6 +1,6 @@
-# 🎬 Video Studio - Professional Online Video Editor
+# 🎬 Video Studio - VPS-Optimized Video Editor & Automation Platform
 
-Kapsamlı, profesyonel ve web-based video düzenleme ve otomasyon platformu.
+Professional web-based video editing and automation platform optimized for VPS deployment (8GB RAM, 6-core CPU).
 
 ## ✨ Özellikler
 
@@ -104,32 +104,57 @@ video-studio/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- Node.js 18+
-- Rust 1.70+
-- FFmpeg (video processing)
+- Docker & Docker Compose 20+
+- 8GB RAM minimum (6GB for Whisper service + 2GB for other services)
+- 6-core CPU (E5 or equivalent)
+- 50GB storage minimum
 
-### Development
+### Production Deployment (Docker)
 
 ```bash
 # 1. Clone repository
 git clone <repo>
 cd video-studio
 
-# 2. Start services (PostgreSQL, Redis, MinIO)
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your settings (JWT_SECRET, etc.)
+
+# 3. Deploy with Docker Compose
 docker-compose up -d
 
-# 3. Backend
+# 4. Check service health
+docker-compose ps
+docker-compose logs -f backend
+```
+
+**Services:**
+- Frontend: http://localhost (nginx)
+- Backend API: http://localhost:3000
+- Whisper Service: http://localhost:8001
+- PostgreSQL: localhost:5432
+- Redis: localhost:6379
+
+### Development Setup
+
+```bash
+# Backend (Rust)
 cd backend
+cp .env.example .env
+cargo build
 cargo run
 
-# 4. Frontend
+# Frontend (React)
 cd frontend
 npm install
 npm run dev
-```
+# Access: http://localhost:5173
 
-Access: `http://localhost:5173`
+# Whisper Service (Python)
+cd whisper-service
+pip install -r requirements.txt
+python app.py
+```
 
 ## 🎯 Kullanım Senaryoları
 
@@ -221,6 +246,76 @@ Access: `http://localhost:5173`
 - CDN integration
 - Database sharding ready
 - Microservices architecture
+
+## 🎯 VPS Optimization Features
+
+### Resource-Efficient Design
+- **Whisper Large-v3**: INT8 quantization (5GB RAM vs 10GB+)
+- **Faster-Whisper**: C++ implementation, 4x faster than OpenAI Whisper
+- **FFmpeg Processing**: Lightweight, CPU-only video processing
+- **No Heavy ML Models**: Removed upscaling, interpolation, ML background removal
+- **Chroma Key Alternative**: FFmpeg-based green screen (fast, low memory)
+
+### Implemented Components
+
+#### ✅ Backend (Rust/Axum)
+- JWT authentication with Argon2 password hashing
+- PostgreSQL database with full schema (users, projects, assets, render_jobs)
+- RESTful API endpoints:
+  - `/api/auth/*` - Login, register
+  - `/api/projects/*` - CRUD operations
+  - `/api/assets/*` - File upload with multipart, metadata extraction
+  - `/api/compositions/*` - Timeline JSON storage
+  - `/api/render/*` - Background job queue integration
+  - `/api/templates/*` - Template management
+  - `/ws` - WebSocket for real-time updates
+- Background job queue with tokio mpsc channels
+- Local filesystem storage backend (easily extensible to S3)
+- FFmpeg integration for:
+  - Video metadata extraction
+  - Proxy generation (720p for editing)
+  - Thumbnail generation
+  - Beat detection (audio analysis)
+  - Chroma key (green screen)
+
+#### ✅ AI Features (VPS-Optimized)
+- **Scene Detection**: FFmpeg-based shot detection
+- **Auto-Reframe**: Smart crop for different aspect ratios
+- **Color Grading**: ACES color management, LUT support
+- **Beat Detection**: FFmpeg astats filter, adaptive threshold
+- **Subtitle Generation**: Whisper microservice with fallback
+- **Chroma Key**: Lightweight green/blue screen removal
+- **AI Agent**: OpenAI GPT-4 & Gemini integration with 13 AI tools
+
+#### ✅ Frontend (React/TypeScript)
+- Project management UI
+- Login/Register pages
+- Asset upload with drag-drop
+- Store management (Zustand)
+- API client with axios
+- Responsive design (Tailwind CSS)
+
+#### ✅ Whisper Service (Python/FastAPI)
+- Faster-whisper library
+- INT8 quantization for RAM efficiency
+- VAD filter to skip silent parts
+- Microservice architecture (isolated resource usage)
+- 6GB RAM limit with Docker resource constraints
+
+### AI Tools Available
+1. Auto-subtitle generation (Whisper Large-v3)
+2. Scene detection & smart cuts
+3. Auto-reframe for social media
+4. Beat detection for music sync
+5. Chroma key (green screen)
+6. Color matching
+7. ACES color grading
+8. LUT application
+9. Object tracking
+10. Audio enhancement (FFmpeg filters)
+11. Overlay positioning
+12. Text generation
+13. AI agent with function calling
 
 ## 🎓 Documentation
 
