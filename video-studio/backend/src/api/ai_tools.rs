@@ -23,17 +23,17 @@ pub async fn auto_distribute(
     let mut video_duration: Option<f64> = None;
     let mut image_paths = Vec::new();
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
             "video_duration" => {
-                let data = field.text().await.unwrap();
+                let data = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?;
                 video_duration = Some(data.parse().map_err(|_| StatusCode::BAD_REQUEST)?);
             }
             "image" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("images", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 image_paths.push(path);
@@ -66,15 +66,15 @@ pub async fn align_subtitles(
     let mut language: Option<String> = None;
     let mut audio_path: Option<String> = None;
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "text" => text = Some(field.text().await.unwrap()),
-            "language" => language = Some(field.text().await.unwrap()),
+            "text" => text = Some(field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?),
+            "language" => language = Some(field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?),
             "audio" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("audio", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 audio_path = Some(path);
@@ -115,14 +115,14 @@ pub async fn transcribe_audio(
     let mut audio_path: Option<String> = None;
     let mut language: Option<String> = None;
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "language" => language = Some(field.text().await.unwrap()),
+            "language" => language = Some(field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?),
             "audio" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("audio", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 audio_path = Some(path);
@@ -155,14 +155,14 @@ pub async fn detect_scenes(
     let mut video_path: Option<String> = None;
     let mut threshold = 0.3;
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "threshold" => threshold = field.text().await.unwrap().parse().unwrap_or(0.3),
+            "threshold" => threshold = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?.parse().unwrap_or(0.3),
             "video" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("videos", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 video_path = Some(path);
@@ -205,14 +205,14 @@ pub async fn auto_reframe(
     let mut video_path: Option<String> = None;
     let mut target_aspect = String::from("9:16");
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "target_aspect" => target_aspect = field.text().await.unwrap(),
+            "target_aspect" => target_aspect = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?,
             "video" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("videos", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 video_path = Some(path);
@@ -268,16 +268,16 @@ pub async fn chroma_key(
     let mut similarity = 0.3;
     let mut blend = 0.1;
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "key_color" => key_color = field.text().await.unwrap(),
-            "similarity" => similarity = field.text().await.unwrap().parse().unwrap_or(0.3),
-            "blend" => blend = field.text().await.unwrap().parse().unwrap_or(0.1),
+            "key_color" => key_color = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?,
+            "similarity" => similarity = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?.parse().unwrap_or(0.3),
+            "blend" => blend = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?.parse().unwrap_or(0.1),
             "video" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("videos", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 video_path = Some(path);
@@ -320,14 +320,14 @@ pub async fn detect_beats(
     let mut audio_path: Option<String> = None;
     let mut sensitivity = 0.5;
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
 
         match name.as_str() {
-            "sensitivity" => sensitivity = field.text().await.unwrap().parse().unwrap_or(0.5),
+            "sensitivity" => sensitivity = field.text().await.map_err(|_| StatusCode::BAD_REQUEST)?.parse().unwrap_or(0.5),
             "audio" => {
-                let filename = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap().to_vec();
+                let filename = field.file_name().ok_or(StatusCode::BAD_REQUEST)?.to_string();
+                let data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?.to_vec();
                 let path = state.storage.save_file("audio", &filename, &data).await
                     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
                 audio_path = Some(path);
@@ -396,12 +396,16 @@ pub async fn generate_proxy(
     State(state): State<AppState>,
     Path(asset_id): Path<Uuid>,
 ) -> Result<Json<ProxyResponse>, StatusCode> {
-    // Find asset in database - using optional since we might not have find_by_id
-    // For now, just generate a placeholder response
+    // Find asset in database
+    let asset = crate::db::Asset::find_by_id(&state.db, asset_id).await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
+        .ok_or(StatusCode::NOT_FOUND)?;
+
     let proxy_path = format!("/tmp/proxy_{}.mp4", asset_id);
 
-    // In production, would call video::generate_proxy() here
-    // video::generate_proxy(&asset.file_path, &proxy_path).await
+    // Generate proxy video
+    video::generate_proxy(&asset.file_path, &proxy_path).await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
     Ok(Json(ProxyResponse { proxy_path }))
 }

@@ -192,6 +192,15 @@ impl Asset {
         Ok(())
     }
 
+    pub async fn find_by_id(pool: &PgPool, id: Uuid) -> Result<Option<Self>> {
+        let asset = sqlx::query_as::<_, Asset>("SELECT * FROM assets WHERE id = $1")
+            .bind(id)
+            .fetch_optional(pool)
+            .await?;
+
+        Ok(asset)
+    }
+
     pub async fn list_by_project(pool: &PgPool, project_id: Uuid) -> Result<Vec<Self>> {
         let assets = sqlx::query_as::<_, Asset>(
             "SELECT * FROM assets WHERE project_id = $1 ORDER BY created_at DESC"

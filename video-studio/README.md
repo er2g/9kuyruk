@@ -261,17 +261,34 @@ python app.py
 #### ✅ Backend (Rust/Axum)
 - JWT authentication with Argon2 password hashing
 - PostgreSQL database with full schema (users, projects, assets, render_jobs)
-- RESTful API endpoints:
-  - `/api/auth/*` - Login, register
-  - `/api/projects/*` - CRUD operations
-  - `/api/assets/*` - File upload with multipart, metadata extraction
-  - `/api/compositions/*` - Timeline JSON storage
-  - `/api/render/*` - Background job queue integration
-  - `/api/templates/*` - Template management
+- RESTful API endpoints (28 total):
+
+  **Core APIs:**
+  - `/api/auth/register` - User registration
+  - `/api/auth/login` - User login
+  - `/api/projects` - List, create projects
+  - `/api/projects/:id` - Get, update, delete project
+  - `/api/assets/upload` - Upload video/audio/image
+  - `/api/assets` - List assets by project
+  - `/api/assets/:id` - Delete asset
+  - `/api/compositions` - Create composition
+  - `/api/compositions/:id` - Get, update composition
+  - `/api/render` - Start render job
+  - `/api/render/:job_id/status` - Check render status
+  - `/api/templates` - List, create templates
+  - `/api/templates/:id/apply` - Apply template
+  - `/ws` - WebSocket real-time updates
+
+  **AI Tools (12 endpoints):**
   - `/api/ai/overlay/auto-distribute` - Auto-distribute overlay images
   - `/api/ai/subtitle/align` - Text-to-audio forced alignment (Aeneas)
   - `/api/ai/subtitle/transcribe` - Auto-transcribe with Whisper
-  - `/ws` - WebSocket for real-time updates
+  - `/api/ai/scene/detect` - Scene detection (FFmpeg)
+  - `/api/ai/reframe` - Auto-reframe for social media
+  - `/api/ai/chroma-key` - Green/blue screen removal
+  - `/api/ai/beat-detection` - Music beat detection
+  - `/api/ai/agent/chat` - AI assistant chat
+  - `/api/ai/proxy/:asset_id` - Generate 720p proxy
 - Background job queue with tokio mpsc channels
 - Local filesystem storage backend (easily extensible to S3)
 - FFmpeg integration for:
