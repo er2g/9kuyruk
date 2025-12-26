@@ -268,6 +268,9 @@ python app.py
   - `/api/compositions/*` - Timeline JSON storage
   - `/api/render/*` - Background job queue integration
   - `/api/templates/*` - Template management
+  - `/api/ai/overlay/auto-distribute` - Auto-distribute overlay images
+  - `/api/ai/subtitle/align` - Text-to-audio forced alignment (Aeneas)
+  - `/api/ai/subtitle/transcribe` - Auto-transcribe with Whisper
   - `/ws` - WebSocket for real-time updates
 - Background job queue with tokio mpsc channels
 - Local filesystem storage backend (easily extensible to S3)

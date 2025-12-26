@@ -77,6 +77,11 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/templates", get(api::templates::list).post(api::templates::create))
         .route("/api/templates/:id/apply", post(api::templates::apply))
 
+        // AI Tools
+        .route("/api/ai/overlay/auto-distribute", post(api::ai_tools::auto_distribute))
+        .route("/api/ai/subtitle/align", post(api::ai_tools::align_subtitles))
+        .route("/api/ai/subtitle/transcribe", post(api::ai_tools::transcribe_audio))
+
         // WebSocket for real-time updates
         .route("/ws", get(api::websocket::handler))
 

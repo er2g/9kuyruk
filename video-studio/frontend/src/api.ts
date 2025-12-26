@@ -72,4 +72,38 @@ export const templates = {
     api.post(`/templates/${id}/apply`, { project_id: projectId, variables }),
 };
 
+// AI Tools
+export const aiTools = {
+  // Auto-distribute overlay images across video duration
+  autoDistributeOverlays: (images: File[], videoDuration: number) => {
+    const formData = new FormData();
+    formData.append('video_duration', videoDuration.toString());
+    images.forEach((img) => formData.append('image', img));
+    return api.post('/ai/overlay/auto-distribute', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Align text to audio (forced alignment with Aeneas)
+  alignSubtitles: (text: string, audio: File, language: string) => {
+    const formData = new FormData();
+    formData.append('text', text);
+    formData.append('audio', audio);
+    formData.append('language', language); // "tur" or "eng"
+    return api.post('/ai/subtitle/align', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // Auto-transcribe audio using Whisper
+  transcribeAudio: (audio: File, language?: string) => {
+    const formData = new FormData();
+    formData.append('audio', audio);
+    if (language) formData.append('language', language);
+    return api.post('/ai/subtitle/transcribe', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
 export default api;
