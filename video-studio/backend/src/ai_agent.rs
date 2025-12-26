@@ -228,20 +228,21 @@ Remember: You are editing in a professional environment. Prioritize quality, mai
                 handler: "ai::track_object".to_string(),
             },
 
-            // Background Removal
+            // Chroma Key (Green Screen)
             AITool {
-                name: "remove_background".to_string(),
-                description: "AI-powered background removal (rotoscoping)".to_string(),
+                name: "apply_chroma_key".to_string(),
+                description: "Remove green/blue screen background using chroma key (fast, lightweight alternative to ML)".to_string(),
                 parameters: serde_json::json!({
                     "type": "object",
                     "properties": {
                         "clip_id": { "type": "string" },
-                        "quality": { "type": "string", "enum": ["draft", "preview", "final"], "default": "preview" },
-                        "edge_refinement": { "type": "boolean", "default": true }
+                        "key_color": { "type": "string", "default": "00FF00", "description": "Hex color to remove (e.g., 00FF00 for green)" },
+                        "similarity": { "type": "number", "min": 0, "max": 1, "default": 0.4 },
+                        "blend": { "type": "number", "min": 0, "max": 1, "default": 0.1 }
                     },
                     "required": ["clip_id"]
                 }),
-                handler: "ai::remove_background".to_string(),
+                handler: "ai::apply_chroma_key".to_string(),
             },
 
             // Speech to Text
@@ -325,38 +326,6 @@ Remember: You are editing in a professional environment. Prioritize quality, mai
                     "required": ["clip_id"]
                 }),
                 handler: "ai::suggest_cut_points".to_string(),
-            },
-
-            // Upscaling
-            AITool {
-                name: "upscale_video".to_string(),
-                description: "AI super-resolution upscaling".to_string(),
-                parameters: serde_json::json!({
-                    "type": "object",
-                    "properties": {
-                        "clip_id": { "type": "string" },
-                        "target_resolution": { "type": "string", "enum": ["1080p", "4K", "8K"] },
-                        "model": { "type": "string", "enum": ["fast", "balanced", "quality"] }
-                    },
-                    "required": ["clip_id", "target_resolution"]
-                }),
-                handler: "ai::upscale_video".to_string(),
-            },
-
-            // Frame Interpolation
-            AITool {
-                name: "interpolate_frames".to_string(),
-                description: "Optical flow frame interpolation for slow motion".to_string(),
-                parameters: serde_json::json!({
-                    "type": "object",
-                    "properties": {
-                        "clip_id": { "type": "string" },
-                        "target_fps": { "type": "number" },
-                        "quality": { "type": "string", "enum": ["draft", "preview", "final"] }
-                    },
-                    "required": ["clip_id", "target_fps"]
-                }),
-                handler: "ai::interpolate_frames".to_string(),
             },
 
             // Music Beat Detection

@@ -76,16 +76,26 @@ struct AeneasFragment {
 }
 
 /// Generate subtitles using Whisper (auto transcribe + timing)
-/// Requires: pip install openai-whisper
+/// Uses optimized faster-whisper microservice (int8 quantized, RAM-efficient)
+/// Fallback to CLI whisper if service unavailable
 pub async fn generate_subtitles_whisper(audio_path: String, language: Option<String>) -> Result<Vec<SubtitleEntry>> {
-    let output_dir = "/tmp";
-    let lang_arg = language.unwrap_or_else(|| "tr".to_string());
+    // Try microservice first (faster-whisper with int8 quantization)
+    match call_whisper_service(&audio_path, language.as_deref()).await {
+        Ok(entries) => return Ok(entries),
+        Err(e) => {
+            tracing::warn!("Whisper service unavailable, falling back to CLI: {}", e);
+            // Fallback to CLI version
+        }
+    }
 
-    // Run Whisper
+    // Fallback: CLI whisper (slower but works without service)
+    let output_dir = "/tmp";
+    let lang_arg = language.unwrap_or_else(|| "auto".to_string());
+
     let output = Command::new("whisper")
         .args([
             &audio_path,
-            "--model", "base",
+            "--model", "large-v3",
             "--language", &lang_arg,
             "--output_format", "srt",
             "--output_dir", output_dir,
@@ -96,12 +106,57 @@ pub async fn generate_subtitles_whisper(audio_path: String, language: Option<Str
         anyhow::bail!("Whisper failed: {}", String::from_utf8_lossy(&output.stderr));
     }
 
-    // Find generated SRT file
     let audio_name = Path::new(&audio_path).file_stem().unwrap().to_str().unwrap();
     let srt_path = format!("{}/{}.srt", output_dir, audio_name);
 
-    // Parse SRT
     parse_srt_file(&srt_path).await
+}
+
+/// Call optimized Whisper microservice
+async fn call_whisper_service(audio_path: &str, language: Option<&str>) -> Result<Vec<SubtitleEntry>> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(300)) // 5 min timeout
+        .build()?;
+
+    let mut form = std::collections::HashMap::new();
+    form.insert("audio_path", audio_path);
+    if let Some(lang) = language {
+        form.insert("language", lang);
+    } else {
+        form.insert("language", "auto");
+    }
+
+    let response = client
+        .post("http://localhost:8001/transcribe")
+        .json(&form)
+        .send()
+        .await?;
+
+    if !response.status().is_success() {
+        anyhow::bail!("Whisper service failed: {}", response.status());
+    }
+
+    let result: Vec<WhisperSegment> = response.json().await?;
+
+    let entries: Vec<SubtitleEntry> = result
+        .into_iter()
+        .enumerate()
+        .map(|(i, seg)| SubtitleEntry {
+            index: i + 1,
+            start: seg.start,
+            end: seg.end,
+            text: seg.text,
+        })
+        .collect();
+
+    Ok(entries)
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct WhisperSegment {
+    start: f64,
+    end: f64,
+    text: String,
 }
 
 /// Parse SRT file
