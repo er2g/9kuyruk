@@ -6,6 +6,14 @@ mod jobs;
 mod storage;
 mod templates;
 
+// Professional AI & Video Processing
+mod ai_agent;
+mod scene;
+mod ai;
+mod color;
+mod overlay;
+mod subtitle;
+
 use axum::{routing::{get, post}, Router};
 use sqlx::PgPool;
 use std::sync::Arc;
